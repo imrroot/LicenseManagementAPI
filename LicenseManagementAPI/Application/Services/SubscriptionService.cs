@@ -26,7 +26,7 @@ namespace LicenseManagementAPI.Application.Services
 
         public async Task<IActionResult> AddSubscriptionAsync(AddSubscriptionDto addsubscriptionDto, int userId)
         {
-            var app = await _appRepository.GetAppByIdAsync(addsubscriptionDto.ApplicationId, userId);
+            var app = await _appRepository.GetAppByIdWithSubscriptionsAsync(addsubscriptionDto.ApplicationId, userId);
 
             if (app == null) return new NotFoundObjectResult(new {Message = "Application not found"});
             var exists = app.Subscriptions.Any(s=> s.Name == addsubscriptionDto.Name && s.AppId == addsubscriptionDto.ApplicationId);

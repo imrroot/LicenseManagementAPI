@@ -44,7 +44,7 @@ namespace LicenseManagementAPI.Application.Services
                 return new BadRequestObjectResult(new {Message = "Invalid credentials"});
 
             var token = GenerateJwtToken(user);
-            return new OkObjectResult(new{Message = "Login successful"});
+            return new OkObjectResult(new{Message = "Login successful", Token = token });
         }
 
         private string GenerateJwtToken(User user)
