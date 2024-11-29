@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using System.Text.Json;
 using LicenseManagementAPI.Core.Exceptions;
+using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 
 namespace LicenseManagementAPI.Presentation.Middleware;
@@ -35,6 +36,11 @@ public class GlobalExceptionHandlerMiddleware
         if (exception is DbUpdateException dbUpdateException)
         {
             response = new { Error = "Database Error", Details = dbUpdateException.Message };
+            statusCode = StatusCodes.Status500InternalServerError;
+        }
+        else if (exception is SqliteException sqliteException)
+        {
+            response = new { Error = "Database Error", Details = sqliteException.Message };
             statusCode = StatusCodes.Status500InternalServerError;
         }
         else
