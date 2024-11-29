@@ -9,6 +9,6 @@ namespace LicenseManagementAPI.Core.Interfaces
         Task<IEnumerable<License>> GetLicensesByAppIdAsync(int appId);
         Task AddLicenseAsync(License license);
         Task UpdateLicenseAsync(License license);
-        Task DeleteLicenseAsync(string licenseKey,int userid);
+        Task DeleteLicenseAsync(License license);
     }
 }

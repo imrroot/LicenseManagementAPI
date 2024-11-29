@@ -1,11 +1,13 @@
 ﻿using LicenseManagementAPI.Core.Entities;
+using Microsoft.AspNetCore.Mvc;
 
 namespace LicenseManagementAPI.Core.Interfaces
 {
     public interface ISubscriptionRepository
     {
         Task<IEnumerable<Subscription>> GetSubscriptionsByAppIdAsync(int appId);
+        Task<Subscription> GetSubscriptionByIdAsync(int subscriptionId, int userId);
         Task AddSubscriptionAsync(Subscription subscription);
-        Task<(bool Success, string message)> DeleteSubscriptionAsync(int subscriptionId,int userId);
+        Task DeleteSubscriptionAsync(Subscription subscription);
     }
 }
