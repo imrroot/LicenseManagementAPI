@@ -10,7 +10,7 @@ namespace LicenseManagementAPI.Core.Interfaces
         Task<IEnumerable<App>> GetAppsByUserIdAsync(int userId);
         Task AddAppAsync(App app);
         Task UpdateAppAsync(App app);
-        Task DeleteAppAsync(int appId);
+        Task DeleteAppAsync(App app);
     }
 
 }
