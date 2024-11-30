@@ -31,9 +31,12 @@ namespace LicenseManagementAPI.Presentation.Controllers
         public async Task<IActionResult> ListApplications()
         {
             var userId = int.Parse(User.FindFirst("Id").Value);
-            var apps = await _appService.GetUserAppsAsync(userId);
-            return Ok(apps);
+            
+            return await _appService.GetUserAppsAsync(userId);
+
+            
         }
+        
 
         [HttpPost("freeze/{id}")]
         public async Task<IActionResult> FreezeApplication(int id)
