@@ -3,6 +3,20 @@ using System.ComponentModel.DataAnnotations;
 
 namespace LicenseManagementAPI.Presentation.DTOs
 {
+    public class LicenseResponeDto
+    {
+        public string LicenseKey { get; set; }
+        public string Note { get; set; }
+        public LicenseStatus Status { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public DateTime? LastUsedDate { get; set; }
+        public DateTime ExpirationDate { get; set; }
+        public DateTime? FreezeStartTime { get; set; }
+        public DateTime? FreezeEndTime { get; set; }
+        public string HWID { get; set; }
+        public string IP { get; set; }
+        
+    }
     public class BanLicenseDto
     {
         [Required(ErrorMessage = "License ID is required")]
