@@ -11,10 +11,12 @@ namespace LicenseManagementAPI.Application.Services
     {
         private readonly IAppRepository _appRepository;
         private readonly IUserRepository _userRepository;
-        public AppService(IAppRepository appRepository,IUserRepository userRepository)
+        private readonly ISubscriptionRepository _subscriptionRepository;
+        public AppService(IAppRepository appRepository,IUserRepository userRepository,ISubscriptionRepository subscriptionRepository)
         {
             _appRepository = appRepository;
             _userRepository = userRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         public async Task<IActionResult> CreateAppAsync(CreateApplicationDto CreateappDto, int userId)
@@ -72,17 +74,39 @@ namespace LicenseManagementAPI.Application.Services
             return new OkObjectResult(new{Message = $"{app.Licenses.Count} licenses unfroze and application marked as active"});
         }
 
-        public async Task<IEnumerable<ApplicationResponseDto>> GetUserAppsAsync(int userId)
+        public async Task<IActionResult> GetUserAppsAsync(int userId)
         {
             var apps = await _appRepository.GetAppsByUserIdAsync(userId);
-            return apps.Select(a => new ApplicationResponseDto
+
+            var response = new List<ApplicationWithSubscriptionsResponseDto>();
+
+            foreach (var app in apps)
             {
-                Id = a.Id,
-                Name = a.Name,
-                TotalLicenses = a.Licenses.Count,
-                ActiveLicenses = a.Licenses.Count(l => l.Status == LicenseStatus.Active),
+                var subscriptions = await _subscriptionRepository.GetSubscriptionsByAppIdAsync(app.Id);
+
+                var appDto = new ApplicationWithSubscriptionsResponseDto
+                {
+                    Id = app.Id,
+                    Name = app.Name,
+                    TotalLicenses = app.Licenses.Count(),
+                    ActiveLicenses = app.Licenses.Count(l => l.Status == LicenseStatus.Active),
+                    Subscriptions = subscriptions.Select(s => new SubscriptionDto
+                    {
+                        Id = s.Id,
+                        Name = s.Name,
+                        AccessLevel = s.Level
+                    }).ToList()
+                };
+
+                response.Add(appDto);
+            }
+
+            return new OkObjectResult(new
+            {
+                Applications = apps
             });
         }
+        
     }
 
 }
