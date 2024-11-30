@@ -10,7 +10,8 @@ namespace LicenseManagementAPI.Application.Interfaces
         Task<IActionResult> DeleteAppAsync(int appId, int userId);
         Task<IActionResult>FreezeAppAsync(int appId, int userId);
         Task<IActionResult>UnfreezeAppAsync(int appId, int userId);
-        Task<IEnumerable<ApplicationResponseDto>> GetUserAppsAsync(int userId);
+        Task<IActionResult> GetUserAppsAsync(int userId);
+        
     }
 
 }
