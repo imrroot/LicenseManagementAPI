@@ -1,13 +1,15 @@
-﻿using LicenseManagementAPI.Presentation.DTOs;
+﻿using System.Net.NetworkInformation;
+using LicenseManagementAPI.Presentation.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LicenseManagementAPI.Application.Interfaces
 {
     public interface ILicenseService
     {
-        
+        Task<IActionResult> GetLicensesAppAsync(int appId, int userId);
         Task<IActionResult> FreezeLicenseAsync(string licenseKey,int userId);
         Task<IActionResult> UnfreezeLicenseAsync(string licenseKey,int userId);
+        
         Task<IActionResult> CreateLicenseAsync(CreateLicenseDto createLicenseDto,int userId);
         Task<IActionResult> BanLicenseAsync(string licenseKey,int userId);
         Task<IActionResult> GetLicenseStatusAsync(string licenseKey,int userId);
