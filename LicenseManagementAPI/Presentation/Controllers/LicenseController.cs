@@ -26,11 +26,19 @@ namespace LicenseManagementAPI.Presentation.Controllers
             
         }
 
+        [HttpPost("list/{appId}")]
+        public async Task<IActionResult> GetLicenseList(int appId)
+        {
+           var userId = int.Parse(User.FindFirst("Id").Value);
+           return await _licenseService.GetLicensesAppAsync(appId, userId);
+            
+        }
+
         [HttpGet("status/{licenseKey}")]
         public async Task<IActionResult> CheckStatus(string licenseKey)
         {
             var userId = int.Parse(User.FindFirst("Id").Value); 
-            return (IActionResult) await _licenseService.GetLicenseStatusAsync(licenseKey,userId);
+            return await _licenseService.GetLicenseStatusAsync(licenseKey,userId);
         }
 
         [HttpPost("ban/{licenseKey}")]
