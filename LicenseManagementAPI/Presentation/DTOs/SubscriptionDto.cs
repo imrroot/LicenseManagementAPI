@@ -15,8 +15,9 @@ namespace LicenseManagementAPI.Presentation.DTOs
     }
     public class SubscriptionDto
     {
+        public int Id { get; set; }
         public string Name { get; set; }
-        public int Level { get; set; }
+        public int AccessLevel { get; set; }
     }
     public class DeleteSubscriptionDto
     {
