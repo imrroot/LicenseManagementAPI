@@ -6,7 +6,7 @@ namespace LicenseManagementAPI.Application.Interfaces
 {
     public interface ISubscriptionService
     {
-        Task<IEnumerable<Subscription>> GetSubscriptionsByAppIdAsync(int appId);
+        Task<IActionResult> GetSubscriptionsByAppIdAsync(int appId);
         Task<IActionResult> AddSubscriptionAsync(AddSubscriptionDto addsubscriptionDto, int userId);
         Task<IActionResult> DeleteSubscriptionAsync(int subscriptionId, int userId);
     }
