@@ -19,9 +19,21 @@ namespace LicenseManagementAPI.Application.Services
             _appRepository = appRepository;
         }
 
-        public async Task<IEnumerable<Subscription>> GetSubscriptionsByAppIdAsync(int appId)
+        public async Task<IActionResult> GetSubscriptionsByAppIdAsync(int appId)
         {
-            return await _subscriptionRepository.GetSubscriptionsByAppIdAsync(appId);
+            var subs =  await _subscriptionRepository.GetSubscriptionsByAppIdAsync(appId);
+            if (subs == null) return new NotFoundObjectResult(new {Message = "Subscription not found for this application."});
+            var subDtos = subs.Select(s => new SubscriptionDto
+            {
+                Id = s.Id,
+                Name = s.Name,
+                AccessLevel = s.Level
+                
+            }).ToList();
+            return new OkObjectResult(new
+            {
+                Subscriptions = subs
+            });
         }
 
         public async Task<IActionResult> AddSubscriptionAsync(AddSubscriptionDto addsubscriptionDto, int userId)

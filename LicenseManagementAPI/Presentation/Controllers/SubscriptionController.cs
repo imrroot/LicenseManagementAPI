@@ -30,7 +30,7 @@ namespace LicenseManagementAPI.Presentation.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             //var userId = int.Parse(User.FindFirst("Id").Value); 
-            return (IActionResult)await _subscriptionService.GetSubscriptionsByAppIdAsync(id);
+            return await _subscriptionService.GetSubscriptionsByAppIdAsync(id);
            
         }
 
