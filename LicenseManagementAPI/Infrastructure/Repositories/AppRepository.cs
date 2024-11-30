@@ -25,6 +25,11 @@ public class AppRepository : IAppRepository
        return await _context.Apps.Include(s=>s.Subscriptions).FirstOrDefaultAsync(a=>a.Id == appId && a.UserId == userId);
     }
 
+    public async Task<App> GetAppByIdWithLicensesAsync(int appId, int userId)
+    {
+        return await _context.Apps.Include(l => l.Licenses).FirstOrDefaultAsync(a => a.Id == appId && a.UserId == userId);
+    }
+
     public async Task<App> GetAppByKeyAsync(string appKey)
     {
         return await _context.Apps.Include(a => a.User).FirstOrDefaultAsync(a => a.AppKey == appKey);
