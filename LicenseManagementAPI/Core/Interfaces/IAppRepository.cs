@@ -6,6 +6,7 @@ namespace LicenseManagementAPI.Core.Interfaces
     {
         Task<App> GetAppByIdAsync(int appId,int userId);
         Task<App> GetAppByIdWithSubscriptionsAsync(int appId, int userId);
+        Task<App> GetAppByIdWithLicensesAsync(int appId, int userId);
         Task<App> GetAppByKeyAsync(string appKey);
         Task<IEnumerable<App>> GetAppsByUserIdAsync(int userId);
         Task AddAppAsync(App app);
