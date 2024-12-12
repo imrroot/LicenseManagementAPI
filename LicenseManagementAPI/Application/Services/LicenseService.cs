@@ -30,7 +30,7 @@ namespace LicenseManagementAPI.Application.Services
             if (app.Licenses == null || app.Licenses.Count == 0)
                 return new NotFoundObjectResult(new { Message = "No licenses found for this application." });
            
-           var LicenseDto = app.Licenses.Select(l => new LicenseResponeDto
+           var licenseDto = app.Licenses.Select(l => new LicenseResponeDto
                 {
                     LicenseKey = l.Pattern,
                     Note = l.Note,
@@ -44,7 +44,7 @@ namespace LicenseManagementAPI.Application.Services
                     IP = l.IP,
                 }
             ).ToList();
-            return new OkObjectResult(new { Licenses = LicenseDto });
+            return new OkObjectResult(new { Licenses = licenseDto });
         }
 
         public async Task<IActionResult> FreezeLicenseAsync(string licenseKey, int userId)
@@ -93,25 +93,38 @@ namespace LicenseManagementAPI.Application.Services
             var subscription = app.Subscriptions.FirstOrDefault(s => s.Name == createLicenseDto.Subscription);
             if (subscription == null)
                 return new NotFoundObjectResult(new { Message = "Subscription level not found for this application." });
-            var license = new License
+
+            var licenses = new List<License>();
+
+            for (int i = 0; i < createLicenseDto.Amount; i++)
             {
-                ApplicationId = app.Id,
-                SubscriptionId = subscription.Id,
-                Pattern = createLicenseDto.Pattern ?? "****-****-****-****",
-                CreationDate = DateTime.UtcNow,
-                Status = LicenseStatus.NotUsed,
-                Duration = createLicenseDto.Duration,
-                ExpiryUnit = createLicenseDto.ExpiryUnit,
-                HWID = createLicenseDto.InitialHWID,
-                IP = createLicenseDto.InitialIP,
-                Note = createLicenseDto.Notes ?? string.Empty
-            };
-            license.SetExpiryDate();
-            license.Pattern = license.GenerateCustomPattern();
-            await _licenseRepository.AddLicenseAsync(license);
+                var license = new License
+                {
+                    ApplicationId = app.Id,
+                    SubscriptionId = subscription.Id,
+                    Pattern = createLicenseDto.Pattern ?? "****-****-****-****",
+                    CreationDate = DateTime.UtcNow,
+                    Status = LicenseStatus.NotUsed,
+                    Duration = createLicenseDto.Duration,
+                    ExpiryUnit = createLicenseDto.ExpiryUnit,
+                    HWID = createLicenseDto.InitialHWID,
+                    IP = createLicenseDto.InitialIP,
+                    Note = createLicenseDto.Notes ?? string.Empty
+                };
+                license.SetExpiryDate();
+                license.Pattern = license.GenerateCustomPattern();
+                licenses.Add(license);
+            }
+
+            await _licenseRepository.AddLicenseAsync(licenses); 
             return new OkObjectResult(new
             {
-                Message = "License created successfully.", LicenseKey = license.Pattern, Expiredate = license.ExpiryDate
+                Message = $"{licenses.Count} licenses created successfully.",
+                Licenses = licenses.Select(l => new
+                {
+                    LicenseKey = l.Pattern,
+                    ExpireDate = l.ExpiryDate
+                })
             });
         }
 
