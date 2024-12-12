@@ -88,8 +88,11 @@ namespace LicenseManagementAPI.Application.Services
                 {
                     Id = app.Id,
                     Name = app.Name,
+                    AppKey = app.AppKey,
+                    AppSecret = app.Secret,
                     TotalLicenses = app.Licenses.Count(),
                     ActiveLicenses = app.Licenses.Count(l => l.Status == LicenseStatus.Active),
+                    IsFrozen = app.IsFrozen,
                     Subscriptions = subscriptions.Select(s => new SubscriptionDto
                     {
                         Id = s.Id,
@@ -103,7 +106,7 @@ namespace LicenseManagementAPI.Application.Services
 
             return new OkObjectResult(new
             {
-                Applications = apps
+                Applications = response
             });
         }
         
