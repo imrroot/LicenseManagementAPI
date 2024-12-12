@@ -27,12 +27,23 @@ public class LicenseRepository : ILicenseRepository
     {
         return await _context.Licenses.Where(l => l.ApplicationId == appId).ToListAsync();
     }
-
-    public async Task AddLicenseAsync(License license)
+    public async Task AddLicenseAsync(License licenses)
     {
         try
         {
-            _context.Licenses.Add(license);
+            _context.Licenses.Add(licenses);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+        {
+
+        }
+    }
+    public async Task AddLicenseAsync(IEnumerable<License> licenses)
+    {
+        try
+        {
+            _context.Licenses.AddRange(licenses);
             await _context.SaveChangesAsync();
         }
         catch (DbUpdateException ex)
