@@ -1,4 +1,6 @@
 ﻿using LicenseManagementAPI.Application.Interfaces;
+using LicenseManagementAPI.Core.Entities;
+using LicenseManagementAPI.Core.Enums;
 using LicenseManagementAPI.Presentation.DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,15 +24,15 @@ namespace LicenseManagementAPI.Presentation.Controllers
         {
             if (!ModelState.IsValid) return BadRequest(ModelState);
             var userId = int.Parse(User.FindFirst("Id").Value); 
-           return await _licenseService.CreateLicenseAsync(createLicenseDto,userId);
+           return await _licenseService.CreateLicenseAsync(createLicenseDto, userId);
             
         }
 
         [HttpPost("list/{appId}")]
-        public async Task<IActionResult> GetLicenseList(int appId)
+        public async Task<IActionResult> GetLicenseList(int appId, [FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10)
         {
            var userId = int.Parse(User.FindFirst("Id").Value);
-           return await _licenseService.GetLicensesAppAsync(appId, userId);
+           return await _licenseService.GetLicensesAppAsync(appId, userId, pageNumber, pageSize);
             
         }
 
@@ -38,7 +40,7 @@ namespace LicenseManagementAPI.Presentation.Controllers
         public async Task<IActionResult> CheckStatus(string licenseKey)
         {
             var userId = int.Parse(User.FindFirst("Id").Value); 
-            return await _licenseService.GetLicenseStatusAsync(licenseKey,userId);
+            return await _licenseService.GetLicenseStatusAsync(licenseKey, userId);
         }
 
         [HttpPost("ban/{licenseKey}")]
@@ -68,6 +70,13 @@ namespace LicenseManagementAPI.Presentation.Controllers
             var userId = int.Parse(User.FindFirst("Id").Value);
             return await _licenseService.DeleteLicenseAsync(licenseKey, userId);
         }
+        [HttpDelete("delete-all/{appId}")]
+        public async Task<IActionResult> DeleteAllLicenses(int appId, [FromQuery] LicenseFilterType filterType = LicenseFilterType.All)
+        {
+            var userId = int.Parse(User.FindFirst("Id").Value); // Extract userId from JWT token
+            return await _licenseService.DeleteAllAsync(appId, userId, filterType);
+        }
+
     }
 
 }

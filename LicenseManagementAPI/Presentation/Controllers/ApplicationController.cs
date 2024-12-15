@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using LicenseManagementAPI.Presentation.DTOs;
+using LicenseManagementAPI.Core.Entities;
 
 namespace LicenseManagementAPI.Presentation.Controllers
 {

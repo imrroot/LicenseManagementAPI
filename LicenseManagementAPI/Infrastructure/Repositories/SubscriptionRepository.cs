@@ -1,5 +1,5 @@
 ﻿using LicenseManagementAPI.Core.Entities;
-using LicenseManagementAPI.Core.Interfaces;
+using LicenseManagementAPI.Infrastructure.Interfaces;
 using LicenseManagementAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 

@@ -1,7 +1,7 @@
 ﻿using LicenseManagementAPI.Application.Interfaces;
 using LicenseManagementAPI.Core.Entities;
 using LicenseManagementAPI.Core.Enums;
-using LicenseManagementAPI.Core.Interfaces;
+using LicenseManagementAPI.Infrastructure.Interfaces;
 using LicenseManagementAPI.Presentation.DTOs;
 using Microsoft.AspNetCore.Mvc;
 

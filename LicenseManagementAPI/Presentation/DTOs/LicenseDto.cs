@@ -17,6 +17,14 @@ namespace LicenseManagementAPI.Presentation.DTOs
         public string IP { get; set; }
         
     }
+    public class LicensePagedResponseDto<T>
+    {
+        public int TotalCount { get; set; }
+        public int PageNumber { get; set; }
+        public int PageSize { get; set; }
+        public IEnumerable<T> Licenses { get; set; }
+    }
+
     public class BanLicenseDto
     {
         [Required(ErrorMessage = "License ID is required")]
@@ -28,6 +36,11 @@ namespace LicenseManagementAPI.Presentation.DTOs
     {
         [Required(ErrorMessage = "Application ID is required")]
         public int ApplicationId { get; set; }
+
+        [Required]
+        [Range(1, 100, ErrorMessage = "Amount must be between 1 and 100.")]
+        public int Amount { get; set; } = 1;
+
 
         [StringLength(100)]
         public string Notes { get; set; } = string.Empty;

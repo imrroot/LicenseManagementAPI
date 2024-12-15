@@ -21,7 +21,10 @@ namespace LicenseManagementAPI.Core.Entities
             using var rng = new RNGCryptoServiceProvider();
             var data = new byte[12]; 
             rng.GetBytes(data);
-            return Convert.ToBase64String(data).Substring(0, 16); 
+            return Convert.ToBase64String(data)
+                .Replace("+", "-")
+                .Replace("/", "_")
+                .Replace("=", "").Substring(0, 16); 
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using LicenseManagementAPI.Application.Interfaces;
 using LicenseManagementAPI.Presentation.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LicenseManagementAPI.Presentation.Controllers
@@ -31,6 +32,20 @@ namespace LicenseManagementAPI.Presentation.Controllers
             return await _userService.AuthenticateUserAsync(loginDto.Email, loginDto.Password);
 
         }
+        [Authorize]
+        [HttpGet("profile")]
+        public async Task<IActionResult> GetProfile()
+        {
+            var userId = int.Parse(User.FindFirst("Id").Value);
+            return await _userService.GetUserProfileAsync(userId);
+        }
+        [HttpPut("update-profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UserUpdateProfileDto updateProfileDto)
+        {
+            var userId = int.Parse(User.FindFirst("Id").Value);
+            return await _userService.UpdateUserProfileAsync(userId, updateProfileDto);
+        }
+
     }
 
 }

@@ -11,12 +11,6 @@ namespace LicenseManagementAPI.Presentation.DTOs
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
     }
-    public class LoginResponseDto
-    {
-        public string Token { get; set; }
-        public string Username { get; set; }
-        public string Email { get; set; }
-    }
     public class RegisterDto
     {
         [Required(ErrorMessage = "Username is required")]
@@ -31,13 +25,20 @@ namespace LicenseManagementAPI.Presentation.DTOs
         [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; }
 
-        [Compare("Password", ErrorMessage = "Passwords don't match")]
-        public string ConfirmPassword { get; set; }
     }
-    public class UserDto
+
+    public class UserProfileDto
     {
-        public string Username { get; set; }
         public string Email { get; set; }
-        public string Password { get; set; }
+        public string Username { get; set; }
+        public string OwnerId {get; set; }
+        public DateTime RegistrationDate { get; set; }
     }
+
+    public class UserUpdateProfileDto
+    {
+        public string Username {get; set; }
+        public string Password {get; set; }
+    }
+    
 }

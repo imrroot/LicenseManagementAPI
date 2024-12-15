@@ -24,7 +24,7 @@ namespace LicenseManagementAPI.Core.Entities
         
         public ExpiryUnit ExpiryUnit { get; set; } = ExpiryUnit.Hours; // Expiry unit, default to hours
         public int Duration { get; set; } = 1; // Duration based on expiry unit
-        public DateTime CreationDate { get; set; } = DateTime.UtcNow;
+        public DateTime CreationDate { get; set; }
         public DateTime? LastUsedDate { get; set; }
         public DateTime ExpiryDate { get; set; }
 
@@ -58,7 +58,7 @@ namespace LicenseManagementAPI.Core.Entities
         }
 
         //Set or add ExpiryDate
-        public void SetExpiryDate()
+        public void AdjustExpiryDate()
         {
             ExpiryDate = CreationDate.Add(GetExpiryTimeSpan());
         }

@@ -1,6 +1,6 @@
 ﻿using LicenseManagementAPI.Core.Entities;
 
-namespace LicenseManagementAPI.Core.Interfaces
+namespace LicenseManagementAPI.Infrastructure.Interfaces
 {
     public interface ILicenseRepository
     {
@@ -11,5 +11,6 @@ namespace LicenseManagementAPI.Core.Interfaces
         Task AddLicenseAsync(IEnumerable<License> licenses);
         Task UpdateLicenseAsync(License license);
         Task DeleteLicenseAsync(License license);
+        Task DeleteAllAsync(Func<License, bool> predicate = null);
     }
 }

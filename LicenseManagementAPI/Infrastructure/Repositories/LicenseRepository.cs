@@ -1,5 +1,5 @@
 ﻿using LicenseManagementAPI.Core.Entities;
-using LicenseManagementAPI.Core.Interfaces;
+using LicenseManagementAPI.Infrastructure.Interfaces;
 using LicenseManagementAPI.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -80,6 +80,23 @@ public class LicenseRepository : ILicenseRepository
         
     }
 
-   
-    
+    public async Task DeleteAllAsync(Func<License, bool> predicate = null)
+    {
+        try
+        {
+            var licensesToDelete = predicate == null
+                ? _context.Licenses.ToList()
+                : _context.Licenses.Where(predicate).ToList();
+
+            if (licensesToDelete.Any())
+            {
+                _context.Licenses.RemoveRange(licensesToDelete);
+                await _context.SaveChangesAsync();
+            }
+        }
+        catch (DbUpdateException ex)
+        {
+            
+        }
+    }
 }

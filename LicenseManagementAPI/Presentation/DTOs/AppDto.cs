@@ -6,17 +6,12 @@ namespace LicenseManagementAPI.Presentation.DTOs
     {
         public int Id { get; set; }
         public string Name { get; set; }
+        public string AppKey { get; set; }
+        public string AppSecret { get; set; }
         public int TotalLicenses { get; set; }
         public int ActiveLicenses { get; set; }
+        public bool IsFrozen { get; set; }
         public List<SubscriptionDto> Subscriptions { get; set; } = new List<SubscriptionDto>();
-    }
-    
-    public class ApplicationResponseDto
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public int TotalLicenses { get; set; }
-        public int ActiveLicenses { get; set; }
     }
     
     public class CreateApplicationDto
@@ -28,9 +23,5 @@ namespace LicenseManagementAPI.Presentation.DTOs
         [StringLength(500)]
         public string Description { get; set; }
     }
-    public class DeleteApplicationDto
-    {
-        [Required(ErrorMessage = "Application ID is required")]
-        public int ApplicationId { get; set; }
-    }
+    
 }

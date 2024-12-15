@@ -1,15 +1,15 @@
 ﻿using LicenseManagementAPI.Application.Interfaces;
 using LicenseManagementAPI.Core.Entities;
 using LicenseManagementAPI.Core.Enums;
-using LicenseManagementAPI.Core.Interfaces;
 using LicenseManagementAPI.Presentation.DTOs;
-using Microsoft.AspNetCore.Http.HttpResults;
+using LicenseManagementAPI.Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LicenseManagementAPI.Application.Services
 {
     public class LicenseService : ILicenseService
     {
+
         private readonly ILicenseRepository _licenseRepository;
         private readonly IAppRepository _appRepository;
         private readonly IEncryptionService _encryptionService;
@@ -23,14 +23,18 @@ namespace LicenseManagementAPI.Application.Services
         }
 
 
-        public async Task<IActionResult> GetLicensesAppAsync(int appId, int userId)
+        public async Task<IActionResult> GetLicensesAppAsync(int appId, int userId, int pageNumber, int pageSize)
         {
             var app = await _appRepository.GetAppByIdWithLicensesAsync(appId, userId);
             if (app == null) return new NotFoundObjectResult(new { Message = "Application doesn't exist." });
             if (app.Licenses == null || app.Licenses.Count == 0)
                 return new NotFoundObjectResult(new { Message = "No licenses found for this application." });
-           
-           var licenseDto = app.Licenses.Select(l => new LicenseResponeDto
+
+            var totalLicenses = app.Licenses.Count;
+            var licenses = app.Licenses
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .Select(l => new LicenseResponeDto
                 {
                     LicenseKey = l.Pattern,
                     Note = l.Note,
@@ -42,10 +46,20 @@ namespace LicenseManagementAPI.Application.Services
                     FreezeEndTime = l.FreezeEndTime,
                     HWID = l.HWID,
                     IP = l.IP,
-                }
-            ).ToList();
-            return new OkObjectResult(new { Licenses = licenseDto });
+                })
+                .ToList();
+
+            var pagedResponse = new LicensePagedResponseDto<LicenseResponeDto>
+            {
+                TotalCount = totalLicenses,
+                PageNumber = pageNumber,
+                PageSize = pageSize,
+                Licenses = licenses
+            };
+
+            return new OkObjectResult(pagedResponse);
         }
+
 
         public async Task<IActionResult> FreezeLicenseAsync(string licenseKey, int userId)
         {
@@ -54,13 +68,13 @@ namespace LicenseManagementAPI.Application.Services
                 return new NotFoundObjectResult(new { Message = "License doesn't exist." });
 
             if (license.Status == LicenseStatus.Frozen)
-                return new BadRequestObjectResult(new { Message = "License is already frozen." });
+                return new BadRequestObjectResult(new { Message = "The license is already frozen." });
 
             license.Status = LicenseStatus.Frozen;
             license.FreezeStartTime = DateTime.UtcNow;
             await _licenseRepository.UpdateLicenseAsync(license);
 
-            return new OkObjectResult(new { Message = "License froze successfully." });
+            return new OkObjectResult(new { Message = "The license was frozen successfully." });
         }
 
         public async Task<IActionResult> UnfreezeLicenseAsync(string licenseKey, int userId)
@@ -70,14 +84,14 @@ namespace LicenseManagementAPI.Application.Services
                 return new NotFoundObjectResult(new { Message = "License doesn't exist." });
 
             if (license.Status != LicenseStatus.Frozen)
-                return new BadRequestObjectResult(new { Message = "License is not froze." });
+                return new BadRequestObjectResult(new { Message = "The license is not frozen." });
 
             license.FreezeEndTime = DateTime.UtcNow;
             license.AdjustExpiryDateAfterUnfreeze();
-            license.Status = LicenseStatus.Active;
+            license.Status = LicenseStatus.NotUsed;
             await _licenseRepository.UpdateLicenseAsync(license);
 
-            return new OkObjectResult(new { Message = "License Unfroze successfully." });
+            return new OkObjectResult(new { Message = "The license was unfrozen successfully." });
         }
 
         public async Task<IActionResult> CreateLicenseAsync(CreateLicenseDto createLicenseDto, int userId)
@@ -111,7 +125,7 @@ namespace LicenseManagementAPI.Application.Services
                     IP = createLicenseDto.InitialIP,
                     Note = createLicenseDto.Notes ?? string.Empty
                 };
-                license.SetExpiryDate();
+                license.AdjustExpiryDate();
                 license.Pattern = license.GenerateCustomPattern();
                 licenses.Add(license);
             }
@@ -135,7 +149,7 @@ namespace LicenseManagementAPI.Application.Services
                 return new NotFoundObjectResult(new { Message = "License doesn't exist." });
             license.Status = LicenseStatus.Banned;
             await _licenseRepository.AddLicenseAsync(license);
-            return new OkObjectResult(new { Message = "License banned." });
+            return new OkObjectResult(new { Message = $"License {licenseKey} was banned successfully." });
         }
 
 
@@ -152,8 +166,30 @@ namespace LicenseManagementAPI.Application.Services
             var lincese = await _licenseRepository.GetLicenseByUserAsync(licenseKey, userId);
             if (lincese == null) return new NotFoundObjectResult(new { Message = "License doesn't exist." });
             await _licenseRepository.DeleteLicenseAsync(lincese);
-            return new OkObjectResult(new { Message = "License is now deleted." });
+            return new OkObjectResult(new { Message = $"License {licenseKey} was deleted successfully." });
         }
+
+        public async Task<IActionResult> DeleteAllAsync(int appId, int userId, LicenseFilterType filterType = LicenseFilterType.All)
+        {
+            var app = await _appRepository.GetAppByIdWithLicensesAsync(appId, userId);
+            if (app == null) return new NotFoundObjectResult(new { Message = "App doesn't exist." });
+            if (app.Licenses == null || app.Licenses.Count == 0) 
+                return new NotFoundObjectResult(new { Message = "No licenses exist for this application." });
+
+            // the predicate based on filterType
+            Func<License, bool> predicate = filterType switch
+            {
+                LicenseFilterType.All => _ => true, 
+                LicenseFilterType.Banned => l => l.Status == LicenseStatus.Banned, 
+                LicenseFilterType.Unused => l => l.Status == LicenseStatus.NotUsed, 
+                LicenseFilterType.Expired => l => l.ExpiryDate < DateTime.UtcNow, 
+                _ => null
+            };
+
+            await _licenseRepository.DeleteAllAsync(predicate);
+            return new OkObjectResult(new { Message = $"Licenses with {filterType.ToString()} status been deleted successfully." });
+        }
+
 
         public async Task<IActionResult> CustomerValidateLicense(string licenseKey, string hwid, string ip)
         {
@@ -242,7 +278,7 @@ namespace LicenseManagementAPI.Application.Services
                 return new BadRequestObjectResult(new
                     { Message = "License is not close enough to expiry for renewal" });
 
-            license.SetExpiryDate();
+            license.AdjustExpiryDate();
             await _licenseRepository.UpdateLicenseAsync(license);
 
             return new OkObjectResult(new

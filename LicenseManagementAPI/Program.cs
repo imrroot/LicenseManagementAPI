@@ -2,7 +2,7 @@
 using System.Text;
 using LicenseManagementAPI.Application.Interfaces;
 using LicenseManagementAPI.Application.Services;
-using LicenseManagementAPI.Core.Interfaces;
+using LicenseManagementAPI.Infrastructure.Interfaces;
 using LicenseManagementAPI.Infrastructure.Data;
 using LicenseManagementAPI.Infrastructure.Repositories;
 using LicenseManagementAPI.Presentation.Middleware;

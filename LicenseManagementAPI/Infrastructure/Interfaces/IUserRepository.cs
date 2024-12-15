@@ -1,6 +1,6 @@
 ﻿using LicenseManagementAPI.Core.Entities;
 
-namespace LicenseManagementAPI.Core.Interfaces
+namespace LicenseManagementAPI.Infrastructure.Interfaces
 {
     public interface IUserRepository
     {
