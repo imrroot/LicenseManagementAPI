@@ -49,6 +49,12 @@ namespace LicenseManagementAPI.Presentation.Controllers
             var userId = int.Parse(User.FindFirst("Id").Value);
             return await _licenseService.BanLicenseAsync(licenseKey, userId);
         }
+        [HttpPost("unban/{licenseKey}")]
+        public async Task<IActionResult> UnBanLicense(string licenseKey)
+        {
+            var userId = int.Parse(User.FindFirst("Id").Value);
+            return await _licenseService.UnBanLicenseAsync(licenseKey, userId);
+        }
 
         [HttpPost("freeze/{licenseKey}")]
         public async Task<IActionResult> FreezeLicense(string licenseKey)
@@ -75,6 +81,12 @@ namespace LicenseManagementAPI.Presentation.Controllers
         {
             var userId = int.Parse(User.FindFirst("Id").Value); // Extract userId from JWT token
             return await _licenseService.DeleteAllAsync(appId, userId, filterType);
+        }
+        [HttpDelete("delete-device/{licenseKey}")]
+        public async Task<IActionResult> DeleteDevice(string licenseKey)
+        {
+            var userId = int.Parse(User.FindFirst("Id").Value); // Extract userId from JWT token
+            return await _licenseService.DeleteDeviceAsync(licenseKey, userId);
         }
 
     }
