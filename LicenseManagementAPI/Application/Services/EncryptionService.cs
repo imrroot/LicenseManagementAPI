@@ -1,8 +1,12 @@
-﻿namespace LicenseManagementAPI.Application.Services
+﻿using System.Text.Json.Serialization;
+using LicenseManagementAPI.Presentation.DTOs;
+
+namespace LicenseManagementAPI.Application.Services
 {
     using LicenseManagementAPI.Application.Interfaces;
     using System.Security.Cryptography;
     using System.Text;
+    using System.Text.Json;
 
     public class EncryptionService : IEncryptionService
     {
@@ -24,7 +28,7 @@
             return Convert.ToBase64String(ms.ToArray());
         }
 
-        public string Decrypt(string cipherText, string key, string iv)
+        public CustomerRequestBodyDto Decrypt(string cipherText, string key, string iv)
         {
             using var aes = Aes.Create();
             aes.Key = Encoding.UTF8.GetBytes(key.PadRight(32).Substring(0, 32)); // Ensure key is 32 bytes
@@ -35,7 +39,19 @@
             using (var cryptoStream = new CryptoStream(ms, decryptor, CryptoStreamMode.Read))
             {
                 using var reader = new StreamReader(cryptoStream);
-                return reader.ReadToEnd();
+                var decryptedText = reader.ReadToEnd();
+                try
+                {
+                    // Deserialize the JSON into CustomerRequestBodyDto
+                    return JsonSerializer.Deserialize<CustomerRequestBodyDto>(decryptedText, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true // Handle case-insensitivity for property names
+                    }) ?? throw new FormatException("Decrypted data is not in the expected JSON format.");
+                }
+                catch (JsonException ex)
+                {
+                    throw new FormatException("Error deserializing JSON: " + ex.Message);
+                }
             }
         }
     }
