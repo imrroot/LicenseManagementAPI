@@ -66,11 +66,6 @@ namespace LicenseManagementAPI.Presentation.DTOs
         [Required(ErrorMessage = "License ID is required")]
         public int LicenseId { get; set; }
     }
-    public class EncryptedRequestDto
-    {
-        public string AppKey { get; set; }
-        public string EncryptedData { get; set; }
-    }
     public class FreezeLicenseDto
     {
         [Required(ErrorMessage = "License ID is required")]
@@ -101,4 +96,6 @@ namespace LicenseManagementAPI.Presentation.DTOs
     {
         public string LicenseKey { get; set; }
     }
+
+    
 }

@@ -10,6 +10,9 @@ namespace LicenseManagementAPI.Presentation.DTOs
         public string AppSecret { get; set; }
         public int TotalLicenses { get; set; }
         public int ActiveLicenses { get; set; }
+        public int NotUsedLicenses { get; set; }
+        public int BannedLicenses { get; set; }
+        public int FrozenLicenses { get; set; }
         public bool IsFrozen { get; set; }
         public List<SubscriptionDto> Subscriptions { get; set; } = new List<SubscriptionDto>();
     }
