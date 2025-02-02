@@ -92,6 +92,9 @@ namespace LicenseManagementAPI.Application.Services
                     AppSecret = app.Secret,
                     TotalLicenses = app.Licenses.Count(),
                     ActiveLicenses = app.Licenses.Count(l => l.Status == LicenseStatus.Active),
+                    NotUsedLicenses = app.Licenses.Count(l => l.Status == LicenseStatus.NotUsed),
+                    BannedLicenses = app.Licenses.Count(l => l.Status == LicenseStatus.Banned),
+                    FrozenLicenses = app.Licenses.Count(l => l.Status == LicenseStatus.Frozen),
                     IsFrozen = app.IsFrozen,
                     Subscriptions = subscriptions.Select(s => new SubscriptionDto
                     {
