@@ -20,7 +20,7 @@ public class LicenseRepository : ILicenseRepository
 
     public async Task<License> GetLicenseByKeyAsync(string licenseKey)
     {
-        return await _context.Licenses.Include(l => l.App).FirstOrDefaultAsync(l => l.Pattern == licenseKey);
+        return await _context.Licenses.Include(a => a.App).Include(s=>s.Subscription).FirstOrDefaultAsync(l => l.Pattern == licenseKey);
     }
 
     public async Task<IEnumerable<License>> GetLicensesByAppIdAsync(int appId)
