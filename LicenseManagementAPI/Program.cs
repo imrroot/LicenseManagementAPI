@@ -39,11 +39,14 @@ namespace LicenseManagementAPI
                             Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                     };
                 });
+
+            //Register Services
             builder.Services.AddScoped<IUserService, UserService>();
             builder.Services.AddScoped<IAppService, AppService>();
             builder.Services.AddScoped<ILicenseService, LicenseService>();
             builder.Services.AddScoped<ISubscriptionService, SubscriptionService>();
-            builder.Services.AddScoped<IEncryptionService, EncryptionService>(); // Ensure this is included
+            builder.Services.AddScoped<IEncryptionService, EncryptionService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();// Ensure this is included
 
             // Register Repositories
             builder.Services.AddScoped<IUserRepository, UserRepository>();
