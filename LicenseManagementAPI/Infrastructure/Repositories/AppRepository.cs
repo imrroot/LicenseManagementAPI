@@ -37,7 +37,7 @@ public class AppRepository : IAppRepository
 
     public async Task<IEnumerable<App>> GetAppsByUserIdAsync(int userId)
     {
-        return await _context.Apps.Where(a => a.UserId == userId).ToListAsync();
+        return await _context.Apps.Include(l=>l.Licenses).Where(a => a.UserId == userId).ToListAsync();
     }
 
     public async Task AddAppAsync(App app)
