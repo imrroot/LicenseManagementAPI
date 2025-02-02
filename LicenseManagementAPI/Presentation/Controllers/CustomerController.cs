@@ -9,37 +9,37 @@ namespace LicenseManagementAPI.Presentation.Controllers
     [ApiController]
     public class CustomerController : ControllerBase
     {
-        private readonly ILicenseService _licenseService;
+        private readonly ICustomerService _customerService;
 
-        public CustomerController(ILicenseService licenseService)
+        public CustomerController(ICustomerService customerService)
         {
-            _licenseService = licenseService;
+            _customerService = customerService;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] EncryptedRequestDto request)
         {
-            return  await _licenseService.CustomerLoginAsync(request);
+            return  await _customerService.CustomerLoginAsync(request);
             
         }
 
         [HttpPost("status")]
         public async Task<IActionResult> CheckStatus([FromBody] EncryptedRequestDto request)
         {
-            return  await _licenseService.GetCustomerLicenseStatusAsync(request);
+            return  await _customerService.CustomerLicenseGetStatusAsync(request);
             
         }
 
         [HttpPost("renew")]
         public async Task<IActionResult> Renew([FromBody] EncryptedRequestDto request)
         {
-            return await _licenseService.CustomerRenewLicenseAsync(request);
+            return await _customerService.CustomerRenewLicenseAsync(request);
         }
 
         [HttpPost("ban")]
         public async Task<IActionResult> Ban([FromBody] EncryptedRequestDto request)
         {
-            return await _licenseService.CustomerBanLicenseAsync(request);
+            return await _customerService.CustomerBanLicenseAsync(request);
         }
     }
 
